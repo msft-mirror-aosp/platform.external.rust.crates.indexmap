@@ -1,0 +1,17 @@
+name: "indexmap"
+description:
+    "A pure-Rust hash table which preserves (in a limited sense) insertion order."
+
+third_party {
+  url {
+    type: HOMEPAGE
+    value: "https://crates.io/crates/indexmap/1.9.1"
+  }
+  url {
+    type: ARCHIVE
+    value: "https://github.com/bluss/indexmap"
+  }
+  version: "1.9.1"
+  last_upgrade_date { year: 2022 month: 6 day: 30 }
+  license_type: NOTICE
+}
