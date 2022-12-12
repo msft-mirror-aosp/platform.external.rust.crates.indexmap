@@ -1,7 +1,9 @@
-name: "indexmap"
-description:
-    "A pure-Rust hash table which preserves (in a limited sense) insertion order."
+# This project was upgraded with external_updater.
+# Usage: tools/external_updater/updater.sh update rust/crates/indexmap
+# For more info, check https://cs.android.com/android/platform/superproject/+/master:tools/external_updater/README.md
 
+name: "indexmap"
+description: "A hash table with consistent order and fast iteration."
 third_party {
   url {
     type: HOMEPAGE
@@ -9,9 +11,13 @@ third_party {
   }
   url {
     type: ARCHIVE
-    value: "https://github.com/bluss/indexmap"
+    value: "https://static.crates.io/crates/indexmap/indexmap-1.9.2.crate"
   }
-  version: "1.9.1"
-  last_upgrade_date { year: 2022 month: 6 day: 30 }
+  version: "1.9.2"
   license_type: NOTICE
+  last_upgrade_date {
+    year: 2022
+    month: 12
+    day: 12
+  }
 }
