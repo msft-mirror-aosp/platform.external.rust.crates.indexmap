@@ -18,7 +18,7 @@
 //! }
 //! ```
 //!
-//! Requires crate feature `"serde"`
+//! Requires crate feature `"serde"` or `"serde-1"`
 
 use serde::de::{Deserialize, Deserializer, SeqAccess, Visitor};
 use serde::ser::{Serialize, Serializer};
@@ -27,43 +27,7 @@ use core::fmt::{self, Formatter};
 use core::hash::{BuildHasher, Hash};
 use core::marker::PhantomData;
 
-use crate::map::Slice as MapSlice;
-use crate::set::Slice as SetSlice;
 use crate::IndexMap;
-
-/// Serializes a `map::Slice` as an ordered sequence.
-///
-/// This behaves like [`crate::serde_seq`] for `IndexMap`, serializing a sequence
-/// of `(key, value)` pairs, rather than as a map that might not preserve order.
-///
-/// Requires crate feature `"serde"`
-impl<K, V> Serialize for MapSlice<K, V>
-where
-    K: Serialize,
-    V: Serialize,
-{
-    fn serialize<T>(&self, serializer: T) -> Result<T::Ok, T::Error>
-    where
-        T: Serializer,
-    {
-        serializer.collect_seq(self)
-    }
-}
-
-/// Serializes a `set::Slice` as an ordered sequence.
-///
-/// Requires crate feature `"serde"`
-impl<T> Serialize for SetSlice<T>
-where
-    T: Serialize,
-{
-    fn serialize<Se>(&self, serializer: Se) -> Result<Se::Ok, Se::Error>
-    where
-        Se: Serializer,
-    {
-        serializer.collect_seq(self)
-    }
-}
 
 /// Serializes an `IndexMap` as an ordered sequence.
 ///
@@ -80,7 +44,7 @@ where
 /// }
 /// ```
 ///
-/// Requires crate feature `"serde"`
+/// Requires crate feature `"serde"` or `"serde-1"`
 pub fn serialize<K, V, S, T>(map: &IndexMap<K, V, S>, serializer: T) -> Result<T::Ok, T::Error>
 where
     K: Serialize + Hash + Eq,
@@ -136,7 +100,7 @@ where
 /// }
 /// ```
 ///
-/// Requires crate feature `"serde"`
+/// Requires crate feature `"serde"` or `"serde-1"`
 pub fn deserialize<'de, D, K, V, S>(deserializer: D) -> Result<IndexMap<K, V, S>, D::Error>
 where
     D: Deserializer<'de>,
