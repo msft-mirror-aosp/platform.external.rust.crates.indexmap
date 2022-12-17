@@ -1,19 +1,7 @@
-- 2.0.0 (pending)
+- 1.9.2
 
-  - The `"std"` feature is no longer auto-detected. It is included in the
-    default feature set, or else can be enabled like any other Cargo feature.
-
-  - The `"serde-1"` feature has been removed, leaving just the optional
-    `"serde"` dependency to be enabled like a feature itself.
-
-  - `IndexMap::get_index_mut` now returns `Option<(&K, &mut V)>`, changing
-    the key part from `&mut K` to `&K`. There is also a new alternative
-    `MutableKeys::get_index_mut2` to access the former behavior.
-
-  - The new `map::Slice<K, V>` and `set::Slice<T>` offer a linear view of maps
-    and sets, behaving a lot like normal `[(K, V)]` and `[T]` slices. Notably,
-    comparison traits like `Eq` only consider items in order, rather than hash
-    lookups, and slices even implement `Hash`.
+  - `IndexMap` and `IndexSet` both implement `arbitrary::Arbitrary<'_>` and
+    `quickcheck::Arbitrary` if those optional dependency features are enabled.
 
 - 1.9.1
 
