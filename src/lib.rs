@@ -55,18 +55,19 @@
 //!
 //! This version of indexmap requires Rust 1.56 or later.
 //!
-//! The indexmap 2.x release series will use a carefully considered version
-//! upgrade policy, where in a later 2.x version, we will raise the minimum
+//! The indexmap 1.x release series will use a carefully considered version
+//! upgrade policy, where in a later 1.x version, we will raise the minimum
 //! required Rust version.
 //!
 //! ## No Standard Library Targets
 //!
-//! This crate supports being built without `std`, requiring `alloc` instead.
-//! This is chosen by disabling the default "std" cargo feature, by adding
-//! `default-features = false` to your dependency specification.
+//! This crate supports being built without `std`, requiring
+//! `alloc` instead. This is enabled automatically when it is detected that
+//! `std` is not available. There is no crate feature to enable/disable to
+//! trigger this. It can be tested by building for a std-less target.
 //!
 //! - Creating maps and sets using [`new`][IndexMap::new] and
-//! [`with_capacity`][IndexMap::with_capacity] is unavailable without `std`.
+//! [`with_capacity`][IndexMap::with_capacity] is unavailable without `std`.  
 //!   Use methods [`IndexMap::default`][def],
 //!   [`with_hasher`][IndexMap::with_hasher],
 //!   [`with_capacity_and_hasher`][IndexMap::with_capacity_and_hasher] instead.
@@ -78,12 +79,13 @@
 
 extern crate alloc;
 
-#[cfg(feature = "std")]
+#[cfg(has_std)]
 #[macro_use]
 extern crate std;
 
 use alloc::vec::{self, Vec};
 
+mod arbitrary;
 #[macro_use]
 mod macros;
 mod equivalent;

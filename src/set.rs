@@ -1,24 +1,18 @@
 //! A hash set implemented using `IndexMap`
 
-mod slice;
-
-pub use self::slice::Slice;
-
 #[cfg(feature = "rayon")]
 pub use crate::rayon::set as rayon;
 
-#[cfg(feature = "std")]
+#[cfg(has_std)]
 use std::collections::hash_map::RandomState;
 
-use crate::util::try_simplify_range;
 use crate::vec::{self, Vec};
-use alloc::boxed::Box;
 use core::cmp::Ordering;
 use core::fmt;
 use core::hash::{BuildHasher, Hash};
 use core::iter::{Chain, FusedIterator};
 use core::ops::{BitAnd, BitOr, BitXor, Index, RangeBounds, Sub};
-use core::slice::Iter as SliceIter;
+use core::slice;
 
 use super::{Entries, Equivalent, IndexMap};
 
@@ -65,11 +59,11 @@ type Bucket<T> = super::Bucket<T, ()>;
 /// assert!(letters.contains(&'u'));
 /// assert!(!letters.contains(&'y'));
 /// ```
-#[cfg(feature = "std")]
+#[cfg(has_std)]
 pub struct IndexSet<T, S = RandomState> {
     pub(crate) map: IndexMap<T, (), S>,
 }
-#[cfg(not(feature = "std"))]
+#[cfg(not(has_std))]
 pub struct IndexSet<T, S> {
     pub(crate) map: IndexMap<T, (), S>,
 }
@@ -130,7 +124,7 @@ where
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(has_std)]
 impl<T> IndexSet<T> {
     /// Create a new set. (Does not allocate.)
     pub fn new() -> Self {
@@ -657,20 +651,6 @@ where
 }
 
 impl<T, S> IndexSet<T, S> {
-    /// Returns a slice of all the values in the set.
-    ///
-    /// Computes in **O(1)** time.
-    pub fn as_slice(&self) -> &Slice<T> {
-        Slice::from_slice(self.as_entries())
-    }
-
-    /// Converts into a boxed slice of all the values in the set.
-    ///
-    /// Note that this will drop the inner hash table and any excess capacity.
-    pub fn into_boxed_slice(self) -> Box<Slice<T>> {
-        Slice::from_boxed(self.into_entries().into_boxed_slice())
-    }
-
     /// Get a value by index
     ///
     /// Valid indices are *0 <= index < self.len()*
@@ -678,17 +658,6 @@ impl<T, S> IndexSet<T, S> {
     /// Computes in **O(1)** time.
     pub fn get_index(&self, index: usize) -> Option<&T> {
         self.as_entries().get(index).map(Bucket::key_ref)
-    }
-
-    /// Returns a slice of values in the given range of indices.
-    ///
-    /// Valid indices are *0 <= index < self.len()*
-    ///
-    /// Computes in **O(1)** time.
-    pub fn get_range<R: RangeBounds<usize>>(&self, range: R) -> Option<&Slice<T>> {
-        let entries = self.as_entries();
-        let range = try_simplify_range(range, entries.len())?;
-        entries.get(range).map(Slice::from_slice)
     }
 
     /// Get the first value
@@ -836,14 +805,7 @@ impl<T: fmt::Debug> fmt::Debug for IntoIter<T> {
 /// [`IndexSet`]: struct.IndexSet.html
 /// [`iter`]: struct.IndexSet.html#method.iter
 pub struct Iter<'a, T> {
-    iter: SliceIter<'a, Bucket<T>>,
-}
-
-impl<'a, T> Iter<'a, T> {
-    /// Returns a slice of the remaining entries in the iterator.
-    pub fn as_slice(&self) -> &'a Slice<T> {
-        Slice::from_slice(self.iter.as_slice())
-    }
+    iter: slice::Iter<'a, Bucket<T>>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
@@ -947,7 +909,7 @@ where
     }
 }
 
-#[cfg(feature = "std")]
+#[cfg(has_std)]
 impl<T, const N: usize> From<[T; N]> for IndexSet<T, RandomState>
 where
     T: Eq + Hash,
@@ -1940,7 +1902,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "std")]
+    #[cfg(has_std)]
     fn from_array() {
         let set1 = IndexSet::from([1, 2, 3, 4]);
         let set2: IndexSet<_> = [1, 2, 3, 4].into();
